@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aura — APK Installer</title>
+  <style>
+    /* ── Color tokens ── */
+    :root {
+      --md-primary:            #00796B;
+      --md-primary-container:  #B2DFDB;
+      --md-on-primary:         #FFFFFF;
+      --md-on-primary-container: #004D40;
+      --md-secondary:          #00897B;
+      --md-background:         #FAFAFA;
+      --md-surface:            #FFFFFF;
+      --md-surface-variant:    #F0F4F3;
+      --md-on-background:      #1A1C1B;
+      --md-on-surface:         #1A1C1B;
+      --md-on-surface-variant: #3F4946;
+      --md-outline:            #6F7975;
+      --md-outline-variant:    #BEC9C5;
+      --md-shadow:             rgba(0, 0, 0, 0.12);
+
+      /* Shape */
+      --shape-xs:   8px;
+      --shape-sm:   12px;
+      --shape-md:   16px;
+      --shape-lg:   28px;
+      --shape-xl:   36px;
+      --shape-full: 9999px;
+
+      /* Motion */
+      --motion-standard: cubic-bezier(0.2, 0, 0, 1);
+    }
+
+    /* ── Reset & base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+                   Roboto, Helvetica, Arial, sans-serif;
+      background: var(--md-background);
+      color: var(--md-on-background);
+      min-height: 100vh;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Layout ── */
+    .page-wrapper {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 0 24px 64px;
+    }
+
+    /* ── Top app bar ── */
+    .top-bar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: var(--md-surface);
+      border-bottom: 1px solid var(--md-outline-variant);
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .top-bar-logo {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--shape-sm);
+      background: var(--md-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .top-bar-logo span {
+      color: var(--md-on-primary);
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .top-bar-name {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--md-on-surface);
+      letter-spacing: -0.01em;
+    }
+
+    /* ── Hero ── */
+    .hero {
+      padding: 64px 0 48px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 24px;
+    }
+
+    .hero-monogram {
+      width: 96px;
+      height: 96px;
+      border-radius: var(--shape-xl);
+      background: var(--md-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 16px rgba(0, 121, 107, 0.30);
+    }
+
+    .hero-monogram span {
+      color: var(--md-on-primary);
+      font-size: 52px;
+      font-weight: 700;
+      line-height: 1;
+      letter-spacing: -0.03em;
+    }
+
+    .hero-heading {
+      font-size: clamp(36px, 8vw, 56px);
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      color: var(--md-on-surface);
+      line-height: 1.1;
+    }
+
+    .hero-tagline {
+      font-size: clamp(16px, 3.5vw, 20px);
+      color: var(--md-on-surface-variant);
+      max-width: 480px;
+      font-weight: 400;
+    }
+
+    /* ── CTA button ── */
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 18px 40px;
+      border-radius: var(--shape-full);
+      background: var(--md-primary);
+      color: var(--md-on-primary);
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0, 121, 107, 0.25);
+      transition: background 200ms var(--motion-standard),
+                  box-shadow 200ms var(--motion-standard),
+                  transform 120ms var(--motion-standard);
+      will-change: transform;
+    }
+
+    .btn-primary:hover {
+      background: #00695C;
+      box-shadow: 0 6px 20px rgba(0, 121, 107, 0.35);
+      transform: translateY(-1px);
+    }
+
+    .btn-primary:active {
+      background: #00574B;
+      box-shadow: 0 1px 4px rgba(0, 121, 107, 0.20);
+      transform: translateY(0);
+    }
+
+    .btn-icon {
+      width: 22px;
+      height: 22px;
+      fill: var(--md-on-primary);
+      flex-shrink: 0;
+    }
+
+    .hero-req {
+      font-size: 14px;
+      color: var(--md-outline);
+    }
+
+    /* ── Divider ── */
+    .divider {
+      border: none;
+      border-top: 1px solid var(--md-outline-variant);
+      margin: 40px 0;
+    }
+
+    /* ── Features ── */
+    .section-label {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--md-primary);
+      margin-bottom: 20px;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+    }
+
+    .feature-card {
+      background: var(--md-surface);
+      border: 1px solid var(--md-outline-variant);
+      border-radius: var(--shape-lg);
+      padding: 24px;
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      transition: box-shadow 180ms var(--motion-standard),
+                  transform 180ms var(--motion-standard);
+    }
+
+    .feature-card:hover {
+      box-shadow: 0 4px 16px var(--md-shadow);
+      transform: translateY(-2px);
+    }
+
+    .feature-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--shape-md);
+      background: var(--md-primary-container);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .feature-icon svg {
+      width: 22px;
+      height: 22px;
+      fill: var(--md-on-primary-container);
+    }
+
+    .feature-text h3 {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--md-on-surface);
+      margin-bottom: 4px;
+      letter-spacing: -0.01em;
+    }
+
+    .feature-text p {
+      font-size: 13px;
+      color: var(--md-on-surface-variant);
+      line-height: 1.5;
+    }
+
+    /* ── What's New collapsible ── */
+    .whats-new {
+      background: var(--md-surface);
+      border: 1px solid var(--md-outline-variant);
+      border-radius: var(--shape-lg);
+      overflow: hidden;
+    }
+
+    .whats-new summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 24px;
+      cursor: pointer;
+      list-style: none;
+      user-select: none;
+      transition: background 150ms var(--motion-standard);
+    }
+
+    .whats-new summary::-webkit-details-marker { display: none; }
+
+    .whats-new summary:hover {
+      background: var(--md-surface-variant);
+    }
+
+    .whats-new-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .whats-new-title span {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--md-on-surface);
+    }
+
+    .whats-new-badge {
+      font-size: 12px;
+      font-weight: 600;
+      padding: 2px 10px;
+      border-radius: var(--shape-full);
+      background: var(--md-primary-container);
+      color: var(--md-on-primary-container);
+    }
+
+    .chevron {
+      width: 20px;
+      height: 20px;
+      fill: var(--md-on-surface-variant);
+      transition: transform 250ms var(--motion-standard);
+      flex-shrink: 0;
+    }
+
+    .whats-new[open] .chevron {
+      transform: rotate(180deg);
+    }
+
+    .whats-new-body {
+      padding: 0 24px 24px;
+      border-top: 1px solid var(--md-outline-variant);
+    }
+
+    .whats-new-body ul {
+      list-style: none;
+      padding: 0;
+      margin-top: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .whats-new-body li {
+      display: flex;
+      gap: 10px;
+      font-size: 14px;
+      color: var(--md-on-surface-variant);
+      line-height: 1.5;
+    }
+
+    .whats-new-body li::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--md-primary);
+      flex-shrink: 0;
+      margin-top: 8px;
+    }
+
+    /* ── Footer ── */
+    footer {
+      margin-top: 56px;
+      padding-top: 24px;
+      border-top: 1px solid var(--md-outline-variant);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 24px;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      color: var(--md-outline);
+    }
+
+    footer a {
+      color: var(--md-primary);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    footer a:hover { text-decoration: underline; }
+
+    .footer-dot {
+      color: var(--md-outline-variant);
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 480px) {
+      .page-wrapper { padding: 0 16px 48px; }
+      .hero { padding: 48px 0 36px; gap: 18px; }
+      .hero-monogram { width: 80px; height: 80px; border-radius: var(--shape-lg); }
+      .hero-monogram span { font-size: 44px; }
+      .btn-primary { padding: 16px 32px; font-size: 16px; }
+      .features-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --md-primary:            #80CBC4;
+        --md-primary-container:  #004D40;
+        --md-on-primary:         #003731;
+        --md-on-primary-container: #B2DFDB;
+        --md-background:         #191C1B;
+        --md-surface:            #1F2322;
+        --md-surface-variant:    #2B2F2E;
+        --md-on-background:      #E1E3E1;
+        --md-on-surface:         #E1E3E1;
+        --md-on-surface-variant: #BBC8C4;
+        --md-outline:            #899390;
+        --md-outline-variant:    #3A4441;
+        --md-shadow:             rgba(0, 0, 0, 0.40);
+      }
+
+      .hero-monogram {
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.50);
+      }
+
+      .btn-primary {
+        background: var(--md-primary);
+        color: var(--md-on-primary);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.40);
+      }
+
+      .btn-primary:hover {
+        background: #96D4CD;
+        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.50);
+      }
+
+      .btn-primary:active {
+        background: #AADDD7;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top app bar -->
+  <header class="top-bar">
+    <div class="top-bar-logo" aria-hidden="true">
+      <span>A</span>
+    </div>
+    <span class="top-bar-name">Aura</span>
+  </header>
+
+  <div class="page-wrapper">
+
+    <!-- Hero -->
+    <section class="hero" aria-labelledby="app-name">
+      <div class="hero-monogram" role="img" aria-label="Aura app icon">
+        <span aria-hidden="true">A</span>
+      </div>
+
+      <h1 class="hero-heading" id="app-name">Aura</h1>
+
+      <p class="hero-tagline">
+        Install APKs from Nexus or local storage
+      </p>
+
+      <a href="aura-v1.0.0.apk" class="btn-primary" download>
+        <!-- Download icon -->
+        <svg class="btn-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 16l-5-5 1.41-1.41L11 13.17V4h2v9.17l2.59-2.58L17 11l-5 5zm-7 3h14v2H5v-2z"/>
+        </svg>
+        Download Aura v1.0.0
+      </a>
+
+      <p class="hero-req">Requires Android 10+ (API 30)</p>
+    </section>
+
+    <hr class="divider">
+
+    <!-- Features -->
+    <section aria-labelledby="features-label">
+      <p class="section-label" id="features-label">Features</p>
+      <div class="features-grid">
+
+        <div class="feature-card">
+          <div class="feature-icon" aria-hidden="true">
+            <!-- Cloud / Nexus icon -->
+            <svg viewBox="0 0 24 24">
+              <path d="M19.35 10.04A7.49 7.49 0 0 0 12 4C9.11 4 6.6 5.64 5.35 8.04A5.994 5.994 0 0 0 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z"/>
+            </svg>
+          </div>
+          <div class="feature-text">
+            <h3>Nexus Repository Manager</h3>
+            <p>Browse and install APKs directly from your Nexus 3 raw repository.</p>
+          </div>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon" aria-hidden="true">
+            <!-- Folder icon -->
+            <svg viewBox="0 0 24 24">
+              <path d="M10 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/>
+            </svg>
+          </div>
+          <div class="feature-text">
+            <h3>Local File Storage</h3>
+            <p>Pick any APK from your device via the system file picker and install it instantly.</p>
+          </div>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon" aria-hidden="true">
+            <!-- Palette / M3 icon -->
+            <svg viewBox="0 0 24 24">
+              <path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-.99 0-.83.67-1.5 1.5-1.5H16c2.76 0 5-2.24 5-5 0-4.42-4.03-8-9-8zm-5.5 9c-.83 0-1.5-.67-1.5-1.5S5.67 9 6.5 9 8 9.67 8 10.5 7.33 12 6.5 12zm3-4C8.67 8 8 7.33 8 6.5S8.67 5 9.5 5s1.5.67 1.5 1.5S10.33 8 9.5 8zm5 0c-.83 0-1.5-.67-1.5-1.5S13.67 5 14.5 5s1.5.67 1.5 1.5S15.33 8 14.5 8zm3 4c-.83 0-1.5-.67-1.5-1.5S16.67 9 17.5 9s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/>
+            </svg>
+          </div>
+          <div class="feature-text">
+            <h3>Material 3 Expressive Design</h3>
+            <p>Dynamic color theming (Material You), adaptive layout for phones and tablets.</p>
+          </div>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon" aria-hidden="true">
+            <!-- Translate icon -->
+            <svg viewBox="0 0 24 24">
+              <path d="M12.87 15.07l-2.54-2.51.03-.03A17.52 17.52 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z"/>
+            </svg>
+          </div>
+          <div class="feature-text">
+            <h3>German &amp; English Support</h3>
+            <p>Fully localized in English and German with a per-app language override setting.</p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- What's New -->
+    <section aria-labelledby="whats-new-label">
+      <p class="section-label" id="whats-new-label">Release Notes</p>
+      <details class="whats-new">
+        <summary>
+          <div class="whats-new-title">
+            <span>What's new in 1.0.0</span>
+            <span class="whats-new-badge">Initial release</span>
+          </div>
+          <!-- Chevron down -->
+          <svg class="chevron" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
+          </svg>
+        </summary>
+        <div class="whats-new-body">
+          <ul>
+            <li>Browse and install APKs from Nexus Repository Manager 3 (raw format)</li>
+            <li>Install APKs from local file storage via system file picker</li>
+            <li>Recent picks list with Room persistence</li>
+            <li>Installed apps list with uninstall support</li>
+            <li>Streaming download with progress indicator</li>
+            <li>Download progress notification via foreground service</li>
+            <li>Settings: server URL, repository name, theme (system / light / dark), dynamic color toggle, language override</li>
+            <li>Material 3 Expressive UI with dynamic color (Material You)</li>
+            <li>German and English localization</li>
+            <li>NavigationSuiteScaffold with adaptive layout for phones and tablets</li>
+          </ul>
+        </div>
+      </details>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+      <span>Self-hosted</span>
+      <span class="footer-dot">·</span>
+      <span>Apache 2.0</span>
+      <span class="footer-dot">·</span>
+      <a href="https://github.com/chriga/aura" rel="noopener noreferrer">Source on GitHub</a>
+    </footer>
+
+  </div>
+
+</body>
+</html>
