@@ -1,0 +1,9 @@
+{
+  "nexus": {
+    "defaultServerUrl": "https://nexus.example.com",
+    "defaultRepository": "apks-raw"
+  },
+  "ui": {
+    "useDynamicColor": true
+  }
+}
