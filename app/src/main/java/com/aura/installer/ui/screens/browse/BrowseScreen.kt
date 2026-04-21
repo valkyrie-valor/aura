@@ -93,12 +93,12 @@ fun BrowseScreen(
                 ) {
                     items(
                         count = pagingItems.itemCount,
-                        key = pagingItems.itemKey { it.id },
+                        key = pagingItems.itemKey { it.name },
                     ) { index ->
                         val item = pagingItems[index]
                         if (item != null) {
                             ListItem(
-                                headlineContent = { Text(item.path.substringAfterLast('/')) },
+                                headlineContent = { Text(item.name) },
                                 supportingContent = {
                                     Text(
                                         if (item.fileSize > 0)
@@ -108,12 +108,7 @@ fun BrowseScreen(
                                 },
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .clickable {
-                                        onAssetClick(
-                                            item.downloadUrl,
-                                            item.path.substringAfterLast('/'),
-                                        )
-                                    }
+                                    .clickable { onAssetClick(item.downloadUrl, item.fileName) }
                             )
                         }
                     }

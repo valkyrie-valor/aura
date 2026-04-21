@@ -5,9 +5,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
@@ -23,6 +29,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.aura.installer.R
@@ -34,12 +43,11 @@ fun SettingsScreen(
     viewModel: SettingsViewModel = hiltViewModel(),
 ) {
     val settings by viewModel.settings.collectAsState()
-    var serverUrlDraft by rememberSaveable(settings.nexusServerUrl) {
-        mutableStateOf(settings.nexusServerUrl)
+    var apiUrlDraft by rememberSaveable(settings.chrigaApiUrl) {
+        mutableStateOf(settings.chrigaApiUrl)
     }
-    var repositoryDraft by rememberSaveable(settings.nexusRepository) {
-        mutableStateOf(settings.nexusRepository)
-    }
+    var newApiKey by rememberSaveable { mutableStateOf("") }
+    var apiKeyVisible by rememberSaveable { mutableStateOf(false) }
 
     Scaffold(
         topBar = { TopAppBar(title = { Text(stringResource(R.string.settings_title)) }) }
@@ -50,30 +58,44 @@ fun SettingsScreen(
                 .verticalScroll(rememberScrollState())
                 .padding(padding)
         ) {
-            ListItem(headlineContent = { Text("Nexus Repository") })
+            ListItem(headlineContent = { Text("ChriGa API") })
             OutlinedTextField(
-                value = serverUrlDraft,
+                value = apiUrlDraft,
                 onValueChange = {
-                    serverUrlDraft = it
-                    viewModel.setServerUrl(it)
+                    apiUrlDraft = it
+                    viewModel.setChrigaApiUrl(it)
                 },
                 label = { Text(stringResource(R.string.settings_server_url)) },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 4.dp),
                 singleLine = true,
             )
             OutlinedTextField(
-                value = repositoryDraft,
-                onValueChange = {
-                    repositoryDraft = it
-                    viewModel.setRepository(it)
+                value = newApiKey,
+                onValueChange = { newApiKey = it },
+                label = { Text("New API Key") },
+                placeholder = { Text("Leave blank to keep current") },
+                singleLine = true,
+                visualTransformation = if (apiKeyVisible) VisualTransformation.None
+                                       else PasswordVisualTransformation(),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                trailingIcon = {
+                    IconButton(onClick = { apiKeyVisible = !apiKeyVisible }) {
+                        Icon(
+                            imageVector = if (apiKeyVisible) Icons.Filled.VisibilityOff
+                                          else Icons.Filled.Visibility,
+                            contentDescription = if (apiKeyVisible) "Hide key" else "Show key",
+                        )
+                    }
                 },
-                label = { Text(stringResource(R.string.settings_repository)) },
+                supportingText = {
+                    if (newApiKey.isNotBlank()) Text("Tap away to save")
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 4.dp),
-                singleLine = true,
             )
 
             HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))

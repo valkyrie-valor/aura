@@ -1,8 +1,7 @@
 package com.aura.installer.data.settings
 
 data class AppSettings(
-    val nexusServerUrl: String = "https://nexus.example.com",
-    val nexusRepository: String = "apks-raw",
+    val chrigaApiUrl: String = "",
     val useDynamicColor: Boolean = true,
     val themeMode: ThemeMode = ThemeMode.SYSTEM,
     val languageOverride: LanguageOverride = LanguageOverride.SYSTEM,

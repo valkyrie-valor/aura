@@ -1,6 +1,7 @@
 package com.aura.installer.di
 
-import com.aura.installer.data.nexus.NexusApi
+import com.aura.installer.data.api.ChrigaApi
+import com.aura.installer.data.security.ApiKeyInterceptor
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides
@@ -26,21 +27,23 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideOkHttpClient(): OkHttpClient = OkHttpClient.Builder()
-        .addInterceptor(HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.BASIC
-        })
-        .build()
+    fun provideOkHttpClient(apiKeyInterceptor: ApiKeyInterceptor): OkHttpClient =
+        OkHttpClient.Builder()
+            .addInterceptor(apiKeyInterceptor)
+            .addInterceptor(HttpLoggingInterceptor().apply {
+                level = HttpLoggingInterceptor.Level.BASIC
+            })
+            .build()
 
     @Provides
     @Singleton
     fun provideRetrofit(okHttpClient: OkHttpClient, json: Json): Retrofit = Retrofit.Builder()
-        .baseUrl("https://nexus.example.com/")
+        .baseUrl("https://localhost/")
         .client(okHttpClient)
         .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
         .build()
 
     @Provides
     @Singleton
-    fun provideNexusApi(retrofit: Retrofit): NexusApi = retrofit.create(NexusApi::class.java)
+    fun provideChrigaApi(retrofit: Retrofit): ChrigaApi = retrofit.create(ChrigaApi::class.java)
 }

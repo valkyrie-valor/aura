@@ -2,6 +2,7 @@ package com.aura.installer.ui.screens.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.aura.installer.data.security.ApiKeyStore
 import com.aura.installer.data.settings.AppSettings
 import com.aura.installer.data.settings.LanguageOverride
 import com.aura.installer.data.settings.SettingsRepository
@@ -15,6 +16,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
     private val repository: SettingsRepository,
+    private val apiKeyStore: ApiKeyStore,
 ) : ViewModel() {
 
     val settings = repository.settings.stateIn(
@@ -23,8 +25,8 @@ class SettingsViewModel @Inject constructor(
         initialValue = AppSettings(),
     )
 
-    fun setServerUrl(url: String) = viewModelScope.launch { repository.setServerUrl(url) }
-    fun setRepository(repo: String) = viewModelScope.launch { repository.setRepository(repo) }
+    fun setChrigaApiUrl(url: String) = viewModelScope.launch { repository.setChrigaApiUrl(url) }
+    fun updateApiKey(key: String) = viewModelScope.launch { if (key.isNotBlank()) apiKeyStore.saveApiKey(key) }
     fun setDynamicColor(enabled: Boolean) = viewModelScope.launch { repository.setDynamicColor(enabled) }
     fun setThemeMode(mode: ThemeMode) = viewModelScope.launch { repository.setThemeMode(mode) }
     fun setLanguageOverride(lang: LanguageOverride) = viewModelScope.launch { repository.setLanguageOverride(lang) }

@@ -3,7 +3,7 @@ package com.aura.installer.ui.screens.browse
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
-import com.aura.installer.data.nexus.NexusRepository
+import com.aura.installer.data.api.ChrigaRepository
 import com.aura.installer.data.settings.SettingsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -18,7 +18,7 @@ import javax.inject.Inject
 @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
 @HiltViewModel
 class BrowseViewModel @Inject constructor(
-    private val nexusRepository: NexusRepository,
+    private val chrigaRepository: ChrigaRepository,
     private val settingsRepository: SettingsRepository,
 ) : ViewModel() {
 
@@ -28,13 +28,9 @@ class BrowseViewModel @Inject constructor(
     val pagingData = combine(
         settingsRepository.settings,
         _query.debounce(300),
-    ) { settings, q -> Pair(settings, q) }
-        .flatMapLatest { (settings, q) ->
-            nexusRepository.searchApks(
-                baseUrl = settings.nexusServerUrl,
-                repository = settings.nexusRepository,
-                query = q,
-            )
+    ) { settings, q -> Pair(settings.chrigaApiUrl, q) }
+        .flatMapLatest { (baseUrl, q) ->
+            chrigaRepository.searchApps(baseUrl = baseUrl, query = q)
         }
         .cachedIn(viewModelScope)
 

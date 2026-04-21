@@ -20,8 +20,7 @@ class SettingsRepository @Inject constructor(
     @ApplicationContext private val context: Context,
 ) {
     private object Keys {
-        val SERVER_URL = stringPreferencesKey("nexus_server_url")
-        val REPOSITORY = stringPreferencesKey("nexus_repository")
+        val CHRIGA_API_URL = stringPreferencesKey("chriga_api_url")
         val DYNAMIC_COLOR = booleanPreferencesKey("use_dynamic_color")
         val THEME_MODE = stringPreferencesKey("theme_mode")
         val LANGUAGE = stringPreferencesKey("language_override")
@@ -29,8 +28,7 @@ class SettingsRepository @Inject constructor(
 
     val settings: Flow<AppSettings> = context.dataStore.data.map { prefs ->
         AppSettings(
-            nexusServerUrl = prefs[Keys.SERVER_URL] ?: "https://nexus.example.com",
-            nexusRepository = prefs[Keys.REPOSITORY] ?: "apks-raw",
+            chrigaApiUrl = prefs[Keys.CHRIGA_API_URL] ?: "",
             useDynamicColor = prefs[Keys.DYNAMIC_COLOR] ?: true,
             themeMode = ThemeMode.entries.firstOrNull {
                 it.name == prefs[Keys.THEME_MODE]
@@ -41,12 +39,8 @@ class SettingsRepository @Inject constructor(
         )
     }
 
-    suspend fun setServerUrl(url: String) {
-        context.dataStore.edit { it[Keys.SERVER_URL] = url }
-    }
-
-    suspend fun setRepository(repo: String) {
-        context.dataStore.edit { it[Keys.REPOSITORY] = repo }
+    suspend fun setChrigaApiUrl(url: String) {
+        context.dataStore.edit { it[Keys.CHRIGA_API_URL] = url }
     }
 
     suspend fun setDynamicColor(enabled: Boolean) {
