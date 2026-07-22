@@ -1,5 +1,6 @@
 package com.aura.installer.ui.screens.settings
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -25,6 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -46,7 +48,7 @@ fun SettingsScreen(
     var apiUrlDraft by rememberSaveable(settings.chrigaApiUrl) {
         mutableStateOf(settings.chrigaApiUrl)
     }
-    var newApiKey by rememberSaveable { mutableStateOf("") }
+    var apiKey by remember { mutableStateOf(viewModel.getApiKey()) }
     var apiKeyVisible by rememberSaveable { mutableStateOf(false) }
 
     Scaffold(
@@ -73,14 +75,22 @@ fun SettingsScreen(
                 singleLine = true,
             )
             OutlinedTextField(
-                value = newApiKey,
-                onValueChange = { newApiKey = it },
-                label = { Text("New API Key") },
-                placeholder = { Text("Leave blank to keep current") },
+                value = apiKey,
+                onValueChange = {
+                    apiKey = it
+                    viewModel.updateApiKey(it)
+                },
+                label = { Text(stringResource(R.string.settings_api_key)) },
                 singleLine = true,
-                visualTransformation = if (apiKeyVisible) VisualTransformation.None
-                                       else PasswordVisualTransformation(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                visualTransformation = if (apiKeyVisible) {
+                    VisualTransformation.None
+                } else {
+                    PasswordVisualTransformation()
+                },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = if (apiKeyVisible) KeyboardType.Ascii else KeyboardType.Password,
+                    autoCorrectEnabled = false,
+                ),
                 trailingIcon = {
                     IconButton(onClick = { apiKeyVisible = !apiKeyVisible }) {
                         Icon(
@@ -89,9 +99,6 @@ fun SettingsScreen(
                             contentDescription = if (apiKeyVisible) "Hide key" else "Show key",
                         )
                     }
-                },
-                supportingText = {
-                    if (newApiKey.isNotBlank()) Text("Tap away to save")
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -107,7 +114,10 @@ fun SettingsScreen(
                         checked = settings.useDynamicColor,
                         onCheckedChange = viewModel::setDynamicColor,
                     )
-                }
+                },
+                modifier = Modifier.clickable {
+                    viewModel.setDynamicColor(!settings.useDynamicColor)
+                },
             )
             ThemeMode.entries.forEach { mode ->
                 ListItem(
@@ -119,7 +129,8 @@ fun SettingsScreen(
                             selected = settings.themeMode == mode,
                             onClick = { viewModel.setThemeMode(mode) },
                         )
-                    }
+                    },
+                    modifier = Modifier.clickable { viewModel.setThemeMode(mode) },
                 )
             }
 

@@ -25,9 +25,19 @@ class SettingsViewModel @Inject constructor(
         initialValue = AppSettings(),
     )
 
+    fun getApiKey(): String = apiKeyStore.getApiKey().orEmpty()
+
     fun setChrigaApiUrl(url: String) = viewModelScope.launch { repository.setChrigaApiUrl(url) }
-    fun updateApiKey(key: String) = viewModelScope.launch { if (key.isNotBlank()) apiKeyStore.saveApiKey(key) }
+
+    fun updateApiKey(key: String) = viewModelScope.launch {
+        val trimmed = key.trim()
+        if (trimmed.isNotEmpty()) {
+            apiKeyStore.saveApiKey(trimmed)
+        }
+    }
+
     fun setDynamicColor(enabled: Boolean) = viewModelScope.launch { repository.setDynamicColor(enabled) }
     fun setThemeMode(mode: ThemeMode) = viewModelScope.launch { repository.setThemeMode(mode) }
     fun setLanguageOverride(lang: LanguageOverride) = viewModelScope.launch { repository.setLanguageOverride(lang) }
 }
+

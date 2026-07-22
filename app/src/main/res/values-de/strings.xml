@@ -10,6 +10,7 @@
     <string name="installed_title">Installierte Apps</string>
     <string name="settings_title">Einstellungen</string>
     <string name="settings_server_url">Server-URL</string>
+    <string name="settings_api_key">API-Schlüssel</string>
     <string name="settings_repository">Repository</string>
     <string name="settings_theme">Design</string>
     <string name="settings_dynamic_color">Dynamische Farbe</string>
