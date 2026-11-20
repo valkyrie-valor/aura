@@ -1,0 +1,115 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-20T21:25:00+01:00",
+  "title": "Design System: Aura",
+  "extensions": {
+    "colorMeta": {
+      "accent-viridian": {
+        "role": "primary",
+        "displayName": "Mineral Viridian",
+        "canonical": "#006B5E",
+        "tonalRamp": ["#041B17", "#003730", "#005248", "#006B5E", "#229485", "#5CE1CA", "#A7F3E6", "#E6FBF7"]
+      },
+      "bg-canvas": {
+        "role": "neutral",
+        "displayName": "Alabaster Stone Canvas",
+        "canonical": "#F2F6F5",
+        "tonalRamp": ["#081211", "#0F1E1C", "#162A27", "#2E4440", "#6B7D79", "#C2D2CE", "#E3ECEA", "#F2F6F5"]
+      },
+      "bg-surface-accent": {
+        "role": "secondary",
+        "displayName": "Tonal Mint Container",
+        "canonical": "#C9EFE8",
+        "tonalRamp": ["#06201C", "#0D3E36", "#145E52", "#238474", "#47B5A2", "#86DFCF", "#C9EFE8", "#EBFBF8"]
+      },
+      "signal-amber-bg": {
+        "role": "tertiary",
+        "displayName": "Amber Release Signal",
+        "canonical": "#FEF3C7",
+        "tonalRamp": ["#2A1503", "#451A03", "#78350F", "#B45309", "#D97706", "#F59E0B", "#FDE68A", "#FEF3C7"]
+      }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Primary application title in the specification hero." },
+      "headline": { "displayName": "Headline", "purpose": "Major section headings without eyebrow kickers." },
+      "title": { "displayName": "Title", "purpose": "Ledger panel titles and package row headers." },
+      "body": { "displayName": "Body", "purpose": "Product descriptions and architectural specifications." },
+      "label": { "displayName": "Tabular Label", "purpose": "Semantic version pills, package IDs, and byte counts." }
+    },
+    "shadows": [],
+    "motion": [
+      { "name": "ease-out-expo", "value": "cubic-bezier(0.16, 1, 0.3, 1)", "purpose": "Crisp responsive transitions on buttons, filter pills, and ledger drawers." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "560px" },
+      { "name": "lg", "value": "960px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Download CTA",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Primary APK download button with embedded monospace artifact badge.",
+      "html": "<a href=\"#\" class=\"ds-btn-download\"><span>Download Aura</span><span class=\"ds-btn-chip\">Aura-v1.1.0.apk</span></a>",
+      "css": ".ds-btn-download { display: inline-flex; align-items: center; gap: 12px; padding: 16px 28px; border-radius: 12px; background: var(--accent-viridian, #006B5E); color: #FFFFFF; font-weight: 600; text-decoration: none; transition: background-color 180ms cubic-bezier(0.16, 1, 0.3, 1), transform 180ms cubic-bezier(0.16, 1, 0.3, 1); } .ds-btn-download:hover { background: var(--accent-viridian-deep, #005248); transform: translateY(-1px); } .ds-btn-download:focus-visible { outline: 2px solid #006B5E; outline-offset: 3px; } .ds-btn-chip { font-family: monospace; font-size: 0.8125rem; padding: 2px 8px; border-radius: 6px; background: rgba(0,0,0,0.18); }"
+    },
+    {
+      "name": "Semantic Version Pill",
+      "kind": "chip",
+      "refersTo": "version-pill",
+      "description": "Tabular monospace badge displaying canonical vX.Y.Z release version.",
+      "html": "<span class=\"ds-ver-pill\">v1.1.0</span>",
+      "css": ".ds-ver-pill { display: inline-block; font-family: monospace; font-size: 0.8125rem; font-weight: 600; font-variant-numeric: tabular-nums; padding: 2px 8px; border-radius: 6px; background: var(--bg-surface-accent, #C9EFE8); color: var(--ink-on-accent, #00241F); }"
+    },
+    {
+      "name": "Category Filter Pill",
+      "kind": "chip",
+      "refersTo": "version-pill",
+      "description": "Interactive filter toggle for the Homelab Package Registry Ledger.",
+      "html": "<button type=\"button\" class=\"ds-filter-btn\" aria-pressed=\"true\">Homelab Suite (5)</button>",
+      "css": ".ds-filter-btn { font-family: monospace; font-size: 0.8125rem; font-weight: 600; padding: 6px 12px; border-radius: 8px; border: 1px solid #006B5E; background: #C9EFE8; color: #00241F; cursor: pointer; } .ds-filter-btn:hover { border-color: #005248; } .ds-filter-btn:focus-visible { outline: 2px solid #006B5E; outline-offset: 3px; }"
+    },
+    {
+      "name": "Registry Search Input",
+      "kind": "input",
+      "refersTo": "surface-panel",
+      "description": "Monospace filter input for querying packages by name or semantic version.",
+      "html": "<input type=\"search\" class=\"ds-search-input\" placeholder=\"Filter by name or version…\" />",
+      "css": ".ds-search-input { font-family: monospace; font-size: 0.8125rem; padding: 6px 12px; border-radius: 8px; border: 1px solid #C2D2CE; background: #F2F6F5; color: #0B1A18; } .ds-search-input:focus-visible { outline: 2px solid #006B5E; outline-offset: 3px; }"
+    },
+    {
+      "name": "Package Ledger Row",
+      "kind": "card",
+      "refersTo": "surface-panel",
+      "description": "Structured package row showing monogram avatar, canonical title, version pill, and size.",
+      "html": "<div class=\"ds-pkg-row\"><span class=\"ds-monogram\">FX</span><div class=\"ds-pkg-meta\"><strong>Flux</strong><span>com.flux.app</span></div><span class=\"ds-ver-pill\">v1.1.1</span><span class=\"ds-size\">3.6 MB</span></div>",
+      "css": ".ds-pkg-row { display: flex; align-items: center; gap: 14px; padding: 14px 18px; background: #FFFFFF; border: 1px solid #C2D2CE; border-radius: 14px; transition: background-color 140ms ease; } .ds-pkg-row:hover { background: #E3ECEA; } .ds-monogram { width: 36px; height: 36px; border-radius: 9px; background: #E3ECEA; border: 1px solid #C2D2CE; font-family: monospace; font-size: 0.8125rem; font-weight: 600; display: flex; align-items: center; justify-content: center; } .ds-pkg-meta { display: flex; flex-direction: column; flex: 1; } .ds-pkg-meta span { font-family: monospace; font-size: 0.8125rem; color: #47605B; } .ds-ver-pill { font-family: monospace; font-size: 0.8125rem; font-weight: 600; padding: 2px 8px; border-radius: 6px; background: #C9EFE8; color: #00241F; } .ds-size { font-family: monospace; font-size: 0.8125rem; color: #2E4440; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Architectural Package Specification Ledger",
+    "overview": "Aura is a private, self-hosted Android package distribution system connecting a personal Nexus 3 repository and chriga-api directly to Android devices. Its visual system refuses both the consumer app-store card carousel and the neon hacker terminal, drawing instead from architectural material specification binders and precision hardware release ledgers. Every package row carries its canonical title, semantic version pill, package identifier, and tabular file size with zero decorative filler.",
+    "keyCharacteristics": [
+      "Prismatic Aura Portal Emblem: Geometric layered diamond-and-square portal framing a download core, replacing generic monogram circles.",
+      "Edition-Number Rigor: Semantic versions (v1.1.0) and artifact names (Aura-v1.1.0.apk) are treated as first-class specification badges set in tabular monospace.",
+      "Hue-Tinted Mineral Surfaces: Secondary ink and borders are tinted from the Mineral Viridian and Obsidian Teal ramp rather than flat neutral gray.",
+      "Native Material You Harmony: On Android 12+, the Compose client adapts seamlessly to the user's dynamic wallpaper palette while preserving structural ledger rows and monospace version pills."
+    ],
+    "rules": [
+      { "name": "The Tinted-Neutral Rule", "body": "Secondary text, table headers, and borders are always tinted with viridian-teal (#2E4440, #47605B, #C2D2CE); pure achromatic gray is never used.", "section": "colors" },
+      { "name": "The Tabular Version Rule", "body": "Every version number, byte count, and artifact path is set in monospace with font-variant-numeric: tabular-nums at a minimum of 13px (0.8125rem).", "section": "typography" },
+      { "name": "The Single-Elevation Rule", "body": "Declare elevation once: resting panels and package rows use a 1px structural border (border-hairline) and zero box-shadow, avoiding ghost cards.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do display every application with its canonical PascalCase/Title name (Aura, Flux, NetCal, Beanfreak, FuelSpotter) and a distinct vX.Y.Z semantic version badge.",
+      "Do use font-variant-numeric: tabular-nums and monospace typography for all version strings, package IDs, and MB file sizes.",
+      "Do provide a single-color transparent-ground vector <monochrome> drawable for every Android app icon so Material You launcher theming works across light and dark themes."
+    ],
+    "donts": [
+      "Don't place uppercase eyebrow/kicker labels above section headings; let the heading carry its own weight.",
+      "Don't use 3-column or 4-column grids of identical icon-heading-text cards; use structured specification tables and package ledger rows.",
+      "Don't combine a 1px border with a wide soft drop shadow on cards or panels."
+    ]
+  }
+}

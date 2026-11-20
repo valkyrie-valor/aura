@@ -7,4 +7,6 @@ data class AppItemDto(
     val name: String = "",
     val path: String = "",
     val fileSize: Long = 0L,
+    val displayName: String = "",
+    val version: String? = null,
 )

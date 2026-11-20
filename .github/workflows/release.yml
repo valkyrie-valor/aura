@@ -8,10 +8,21 @@ jobs:
   release:
     runs-on: ubuntu-latest
     permissions:
-      contents: write   # für GitHub Release
+      contents: write
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Resolve version from Git tag
+        id: version
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          IFS='.' read -r MAJOR MINOR PATCH <<< "${VERSION%%-*}"
+          VERSION_CODE=$(( ${MAJOR:-1} * 10000 + ${MINOR:-0} * 100 + ${PATCH:-0} ))
+          APK_NAME="Aura-v${VERSION}.apk"
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "version_code=${VERSION_CODE}" >> "$GITHUB_OUTPUT"
+          echo "apk_name=${APK_NAME}" >> "$GITHUB_OUTPUT"
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
@@ -29,6 +40,8 @@ jobs:
       - name: Build signed release APK
         run: |
           ./gradlew assembleRelease \
+            -PversionName="${{ steps.version.outputs.version }}" \
+            -PversionCode="${{ steps.version.outputs.version_code }}" \
             -Pandroid.injected.signing.store.file="${GITHUB_WORKSPACE}/keystore.jks" \
             -Pandroid.injected.signing.store.password="${{ secrets.STORE_PASSWORD }}" \
             -Pandroid.injected.signing.key.alias="${{ secrets.KEY_ALIAS }}" \
@@ -36,20 +49,32 @@ jobs:
 
       - name: Rename APK
         run: |
+          cp app/build/outputs/apk/release/app-release.apk "${{ steps.version.outputs.apk_name }}"
           mv app/build/outputs/apk/release/app-release.apk aura-release.apk
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: aura-release.apk
+          files: |
+            ${{ steps.version.outputs.apk_name }}
+            aura-release.apk
           generate_release_notes: true
 
       - name: Upload APK to Nexus raw repo
         run: |
+          EXISTING_IDS=$(curl -fsSL \
+            -u "${{ secrets.NEXUS_USERNAME }}:${{ secrets.NEXUS_PASSWORD }}" \
+            "https://nexus.coolifyapp.chriga.me/service/rest/v1/search/assets?repository=raw" \
+            | jq -r '.items[] | select(.path | test("^/?apks/aura/.*\\.apk$"; "i")) | .id' || true)
+          for id in $EXISTING_IDS; do
+            curl -fsSL -X DELETE \
+              -u "${{ secrets.NEXUS_USERNAME }}:${{ secrets.NEXUS_PASSWORD }}" \
+              "https://nexus.coolifyapp.chriga.me/service/rest/v1/assets/$id" || true
+          done
           curl -fsSL \
             -u "${{ secrets.NEXUS_USERNAME }}:${{ secrets.NEXUS_PASSWORD }}" \
-            --upload-file aura-release.apk \
-            "https://nexus.coolifyapp.chriga.me/repository/raw/apks/aura/aura.apk"
+            --upload-file "${{ steps.version.outputs.apk_name }}" \
+            "https://nexus.coolifyapp.chriga.me/repository/raw/apks/aura/${{ steps.version.outputs.apk_name }}"
 
       - name: Remove keystore
         if: always()

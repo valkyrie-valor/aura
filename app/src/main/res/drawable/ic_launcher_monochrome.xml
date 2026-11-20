@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Outer prismatic diamond portal frame -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="3.4"
+        android:strokeLineJoin="round"
+        android:pathData="M54,23 L85,54 L54,85 L23,54 Z" />
+    <!-- Inner architectural portal frame -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="2.8"
+        android:strokeLineJoin="round"
+        android:pathData="M35,35 L73,35 L73,73 L35,73 Z" />
+    <!-- Package download core arrow & receiving tray -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="5.2"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M54,38 L54,60 M43.5,51 L54,61.5 L64.5,51 M42,68.5 L66,68.5" />
+</vector>
